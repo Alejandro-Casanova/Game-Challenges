@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1595091578 source:c:\users\aleca\desktop\c++\game challenges\challenge 1\main.cpp
+	<iostream>
+	<random>
+	<chrono>
+
