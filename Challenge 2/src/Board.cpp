@@ -9,12 +9,21 @@ Board::Board()//Makes a blank board
     }
 }
 
-void Board::cinIndex(int &var, int maxSize){
-    std::cin >> var;
-    //Checks if the value is correct
-    while(!((var > 0)&&(var<=maxSize))){
-        std::cout << "Please introduce a valid number: ";
-        std::cin >> var;
+void Board::cinIndex(int &input, const int &maxSize, const std::string &message){
+    std::cout << message;
+    while(true){
+        while(!(std::cin >> input)){
+            std::cout << "Invalid input, please try again with a single number: ";
+            std::cin.clear();
+            std::cin.ignore(999, '\n');
+        }
+        //Checks if the value is correct
+        if(!((input > 0)&&(input<=maxSize))){
+            std::cout << "Please introduce a valid number: ";
+        }
+        else{
+            break;
+        }
     }
 }
 
@@ -49,10 +58,8 @@ void Board::setTile(char mark){
     int row, col;
     bool freeTile = false; //Indicates if the selected tile is free or already ocuppied
     do{
-        std::cout << "Indicate desired row number: ";
-        cinIndex(row, SIZEY);
-        std::cout << "Indicate desired colum number: ";
-        cinIndex(col, SIZEX);
+        cinIndex(row, SIZEY, "Indicate desired row number: ");
+        cinIndex(col, SIZEX, "Indicate desired colum number: ");
 
         if(!((getTile(row, col)) == emptyTile)){//Checks if the indicated tile is taken
             freeTile = false;
