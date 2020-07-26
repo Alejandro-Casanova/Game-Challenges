@@ -1,15 +1,11 @@
 #include "Board.h"
 
-Board::Board()//Makes a blank board
+Board::Board(const int &size) : _size(size)//Makes a blank board
 {
-    for (int i = 0; i < SIZEY; i++){
-        for(int j = 0; j < SIZEX; j++){
-            layout[i][j] = emptyTile;
-        }
-    }
+    layout.resize(size, std::vector<char>(size, emptyTile));
 }
 
-void Board::cinIndex(int &input, const int &maxSize, const std::string &message){
+void Board::cinIndex(int &input, const int &maxSize, const std::string &message, const int &minSize){
     std::cout << message;
     while(true){
         while(!(std::cin >> input)){
@@ -30,7 +26,7 @@ void Board::cinIndex(int &input, const int &maxSize, const std::string &message)
 void Board::printLine() const{//Prints a horizontal line, used in "Board::printBoard()" to print lines between rows
     std::cout<<std::endl;
     std::cout<<"--";
-    for(int i = 0; i < SIZEX; i++){
+    for(int i = 0; i < getSize(); i++){
         std::cout<<"----";
     }
     std::cout<<std::endl;
@@ -41,13 +37,13 @@ void Board::printBoard() const{//Prints current layout
     std::cout<<"**TIC TAC TOE**";
     //Print row of x indexes
     std::cout<<"\n |";
-    for(int i = 1; i <= SIZEX; i++){
+    for(int i = 1; i <= getSize(); i++){
         std::cout<<" "<<i<<" |";
     }
     printLine();
-    for(int i = 0; i < SIZEY; i++){
+    for(int i = 0; i < getSize(); i++){
         std::cout<<i+1<<"|";
-        for(int j = 0; j < SIZEX; j++){
+        for(int j = 0; j < getSize(); j++){
             std::cout<<" "<<layout[i][j]<<" |";
         }
         printLine();
@@ -58,8 +54,8 @@ void Board::setTile(char mark){
     int row, col;
     bool freeTile = false; //Indicates if the selected tile is free or already ocuppied
     do{
-        cinIndex(row, SIZEY, "Indicate desired row number: ");
-        cinIndex(col, SIZEX, "Indicate desired colum number: ");
+        cinIndex(row, getSize(), "Indicate desired row number: ");
+        cinIndex(col, getSize(), "Indicate desired colum number: ");
 
         if(!((getTile(row, col)) == emptyTile)){//Checks if the indicated tile is taken
             freeTile = false;
@@ -80,57 +76,114 @@ char Board::getTile(int row, int col) const{
     return layout[row-1][col-1];
 }
 
-void Board::getLayout(char array[SIZEY][SIZEX]){
-    for(int i = 0; i < SIZEY; i++){
-        for(int j = 0; j < SIZEX; j++){
-            array[i][j] = layout[i][j];
-        }
-    }
+std::vector<std::vector<char>> Board::getLayout(){
+    return layout;
+}
+
+int Board::getSize() const{
+    return _size;
 }
 
 bool Board::checkVictory(char mark){
-    char layout[SIZEY][SIZEX];
-    int auxFlag = 0, auxFlag2 = 0;
-    getLayout(layout);
+    std::vector<std::vector<char>> layout;
+    int auxFlag = 0;
+    layout = getLayout();
 
     //Check rows
-    for(int i = 0; i < SIZEY; i++){
+    for(int i = 0; i < getSize(); i++){
         auxFlag = 0;
-        for(int j = 0; j < SIZEX; j++){
+        for(int j = 0; j < getSize(); j++){
             if(getTile(i + 1, j + 1) == mark){
                 auxFlag++;
+            }else {
+                auxFlag = 0;
+            }
+            if(auxFlag>=WINROW){
+                return true;
             }
         }
-        if(auxFlag>=WINROW){
-            return true;
-        }
+
     }
 
     //Check colums
-    for(int i = 0; i < SIZEX; i++){
+    for(int i = 0; i < getSize(); i++){
         auxFlag = 0;
-        for(int j = 0; j < SIZEY; j++){
+        for(int j = 0; j < getSize(); j++){
             if(getTile(j + 1, i + 1) == mark){
                 auxFlag++;
+            }else{
+                auxFlag = 0;
+            }
+            if(auxFlag>=WINROW){
+                return true;
             }
         }
-        if(auxFlag>=WINROW){
-            return true;
-        }
+
     }
 
-    //Check diagonals (Only works for 3x3 layout, as it only chacks the main 2 diagonals)
-    auxFlag = 0;
-    for(int i = 0; i < std::min(SIZEX, SIZEY); i++){
-        if(getTile(i + 1, i + 1) == mark){ //Checks main diagonal (11,22,33)
-            auxFlag++;
+    //Check descending diagonals, i.e. {(1,1),(2,2),(3,3)}
+    int k = 0;
+    for(int i = (getSize() - WINROW + 1); i > 0; i--){
+        auxFlag = 0;
+        for(int j = 0; j < (3 + k); j++){
+            if(getTile(i + j, j + 1) == mark){
+                auxFlag++;
+            }else{
+                auxFlag = 0;
+            }
+            if(auxFlag >= WINROW){
+                return true;
+            }
         }
-        if(getTile(i + 1, 3 - i) == mark){ //Checks opposite diagonal (13,22,31)
-            auxFlag2++;
-        }
+        k++;
     }
-    if((auxFlag == WINROW)||(auxFlag2 == WINROW)){
-        return true;
+    k = 0;
+    //Checks descending diagonals after the main diagonal
+    for(int i = 2; i < getSize() - 1; i++){
+        auxFlag = 0;
+        for(int j = 0; j < getSize() - k; j++){
+            if(getTile(j + 1, i + j) == mark){
+                auxFlag++;
+            }else{
+                auxFlag = 0;
+            }
+            if(auxFlag >= WINROW){
+                return true;
+            }
+        }
+        k++;
+    }
+    //Checks for ascending diagonals, i.e. {(3,1),(2,2),(1,3)}
+    k = 0;
+    for(int i = (getSize()); i >= WINROW; i--){
+        auxFlag = 0;
+        for(int j = 0; j < (getSize() - k); j++){
+            if(getTile(i - j, j + 1) == mark){
+                auxFlag++;
+            }else{
+                auxFlag = 0;
+            }
+            if(auxFlag >= WINROW){
+                return true;
+            }
+        }
+        k++;
+    }
+    k = 0;
+    //Checks ascending diagonals after the main diagonal
+    for(int i = 2; i < getSize() - 1; i++){
+        auxFlag = 0;
+        for(int j = 0; j < getSize() - k; j++){
+            if(getTile(getSize()-j, i + j) == mark){
+                auxFlag++;
+            }else{
+                auxFlag = 0;
+            }
+            if(auxFlag >= WINROW){
+                return true;
+            }
+        }
+        k++;
     }
     return false;
 }
