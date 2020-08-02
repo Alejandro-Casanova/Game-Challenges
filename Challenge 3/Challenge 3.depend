@@ -1,0 +1,33 @@
+# depslib dependency file v1.0
+1596379275 source:c:\users\aleca\desktop\c++\game challenges\challenge 3\main.cpp
+	"player.h"
+	"enemy.h"
+	"map.h"
+	<iostream>
+	<string>
+	<conio.h>
+	<random>
+	<chrono>
+
+1596310837 source:c:\users\aleca\desktop\c++\game challenges\challenge 3\src\map.cpp
+	"map.h"
+
+1596310812 c:\users\aleca\desktop\c++\game challenges\challenge 3\include\map.h
+	"player.h"
+	"enemy.h"
+	<string>
+	<vector>
+	<fstream>
+	<iostream>
+
+1596304134 source:c:\users\aleca\desktop\c++\game challenges\challenge 3\src\player.cpp
+	"player.h"
+
+1596305711 c:\users\aleca\desktop\c++\game challenges\challenge 3\include\player.h
+
+1596310759 source:c:\users\aleca\desktop\c++\game challenges\challenge 3\src\enemy.cpp
+	"enemy.h"
+
+1596311239 c:\users\aleca\desktop\c++\game challenges\challenge 3\include\enemy.h
+	<string>
+
