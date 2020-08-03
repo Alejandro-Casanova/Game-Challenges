@@ -1,4 +1,4 @@
 # Challenge 2 - ASCII Roguelike
 A simple 2D dungeon exploring RPG to put into practice switch statements, vectors, lists, file i/o and advanced treatment of user input.
 
-### Current commit: incomplete
+### Update: Game is Functional: 1 player and 2 types of enemies. Simple AI: enemies move around randomly and attack player when near. Player can attack and kill enemies, as well as die.
