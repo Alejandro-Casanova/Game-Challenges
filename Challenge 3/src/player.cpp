@@ -1,17 +1,15 @@
 #include "player.h"
 
-player::player() : rowPosition(0), colPosition(0), health(PHEALTH), attackDamage(PATTACK), attackPrecision(PPRES){
-}
-
-player::player(const int &rowVal, const int &colVal) : rowPosition(rowVal), colPosition(colVal){
+player::player() : _rowPosition(0), _colPosition(0), _health(PHEALTH),_maxHealth(PHEALTH), _attackDamage(PATTACK), _attackPrecision(PPRES), _xpCount(0), _maxXP(LEVELUPXP), _levelCount(1), _defence(PDEFENCE){
 }
 
 int player::attack(std::string &message){
-    std::stringstream buffer;//Holds message{
-    if(getRandom() < attackPrecision){
-        buffer << "You inflicted: " << attackDamage << " Damage Points.\n";
+    std::stringstream buffer;//Holds message
+
+    if(getRandom() < _attackPrecision){
+        buffer << "You inflicted: " << _attackDamage << " Damage Points.\n";
         message = buffer.str();
-        return attackDamage;
+        return _attackDamage;
     }else{
         buffer << "You missed!\n";
         message = buffer.str();
@@ -20,19 +18,35 @@ int player::attack(std::string &message){
 }
 
 void player::receiveDamage(const int &damageVal){
-    health -= damageVal;
+    if(damageVal > _defence){//Damage is only received if its value is higher than the defence value
+        _health -= (damageVal - _defence);
+    }
+    if(_health < 0){
+        _health = 0;
+    }
 }
 
-int player::getRowPosition() const{
-    return rowPosition;
-}
+void player::gainXp(const int &xp, std::vector<std::string> &messageVector){
+    std::stringstream message;
 
-int player::getColPosition() const{
-    return colPosition;
-}
+    _xpCount += xp;
 
-int player::getHealth() const{
-    return health;
+    //Level UP
+    while(_xpCount >= LEVELUPXP){
+        _xpCount -= LEVELUPXP;
+        _levelCount++;
+
+        //Stats improve
+        _maxHealth += LHEALTH;
+        _health = _maxHealth; //Health restarts
+        _attackDamage += LATTACK;
+        _attackPrecision = std::pow(_attackPrecision, LPRES); //Each time will be closer to 1
+        _defence += LDEF;
+
+        //Get message
+        message << "Congratulations! You reached Level " << _levelCount << "!" << std::endl;
+    }
+    messageVector.push_back(message.str());
 }
 
 float player::getRandom() const{
@@ -43,12 +57,12 @@ float player::getRandom() const{
 }
 
 void player::setPosition(const int &rowVal, const int &colVal){
-    rowPosition = rowVal;
-    colPosition = colVal;
+    _rowPosition = rowVal;
+    _colPosition = colVal;
 }
 
 void player::setStats(const int &damage, const int &precision, const int &healthVal){
-    attackDamage = damage;
-    attackPrecision = precision;
-    health = healthVal;
+    _attackDamage = damage;
+    _attackPrecision = precision;
+    _health = healthVal;
 }

@@ -24,10 +24,13 @@ bool map::loadMap(std::string fileName){
     //Saves map size in private variables
     setVectorSize(mapLayout.size());
     setMaxStringSize(maxStringSize);
+    printf("Map Loaded Succesfully:\n\n");
+    printMap();
+    printf("\n");
+    return 0;
 }
 
 void map::printMap() const{
-    //system("cls");
     for(int i = 0; i < getVectorSize(); i++){
         std::cout << mapLayout[i] << std::endl;
     }
@@ -38,6 +41,7 @@ bool map::initPlayer(player &playerObj){
         for(int j = 0; j < getStringSize(i); j++){
             if(getTile(i, j) == playerChar){
                 playerObj.setPosition(i, j);
+                printf("Player Initialized Succesfully.\n");
                 return 0;
             }
         }
@@ -49,8 +53,11 @@ bool map::initPlayer(player &playerObj){
 bool map::initEnemies(std::vector<enemy> &enemyVector){
     int enemyCounter = 0;
 
+    //Scans for enemies
     for(int i = 0; i < getVectorSize(); i++){
         for(int j = 0; j < getStringSize(i); j++){
+
+            //Initializes Zombie
             if(getTile(i, j) == zombieChar){
                 std::stringstream nameBuffer;
                 static int zombieCounter = 0;
@@ -60,6 +67,7 @@ bool map::initEnemies(std::vector<enemy> &enemyVector){
                 enemyCounter++;
                 zombieCounter++;
             }
+            //Initializes Skeleton
             if(getTile(i, j) == skeletonChar){
                 std::stringstream nameBuffer;
                 static int skeletonCounter = 0;
@@ -68,6 +76,16 @@ bool map::initEnemies(std::vector<enemy> &enemyVector){
                 enemyVector.push_back(newEnemy(nameBuffer.str(), skeletonChar, i, j));
                 enemyCounter++;
                 skeletonCounter++;
+            }
+            //Initializes Dragon
+            if(getTile(i, j) == dragonChar){
+                std::stringstream nameBuffer;
+                static int dragonCounter = 0;
+
+                nameBuffer << "Dragon " << (dragonCounter + 1);
+                enemyVector.push_back(newEnemy(nameBuffer.str(), dragonChar, i, j));
+                enemyCounter++;
+                dragonCounter++;
             }
         }
     }
@@ -96,6 +114,7 @@ void map::movePlayer(player &playerObj, std::vector<enemy> &enemyVector, std::ve
         break;
     case 'Z':{
     case 'S':
+    case 'D':
         bool attackFlag = false;//For security, checks attack has been succesful
         for(int i = 0; i < enemyVector.size(); i++){//Checks which enemy is being attacked
             if((enemyVector[i].getRowPosition() == row) && (enemyVector[i].getColPosition() == col)){
@@ -103,7 +122,7 @@ void map::movePlayer(player &playerObj, std::vector<enemy> &enemyVector, std::ve
                 enemyVector[i].receiveDamage(playerObj.attack(attackMessage));
                 messageVector.push_back(attackMessage);
                 if(enemyVector[i].getHealth() <=0){
-                    messageVector.push_back(killEnemy(enemyVector, i));
+                    playerObj.gainXp(killEnemy(enemyVector, i, messageVector), messageVector);
                 }
                 attackFlag = true;
             }
@@ -142,17 +161,19 @@ bool map::checkForPlayer(const enemy &enemyObj) const{
     return false;
 }
 
-std::string map::killEnemy(std::vector<enemy> &enemyVector, const int &index){
-    int row, col;
+int map::killEnemy(std::vector<enemy> &enemyVector, const int &index, std::vector<std::string> &messageVector){
+    int row, col, xp;
     std::stringstream message;
 
     row = enemyVector[index].getRowPosition();
     col = enemyVector[index].getColPosition();
+    xp = enemyVector[index].getXp();
 
-    message << "You killed " << enemyVector[index].getName() << "!\n";
+    message << "You killed " << enemyVector[index].getName() << "!\n" << "You gained " << xp << " experience points.\n";
     enemyVector.erase(enemyVector.begin() + index);
     setTile(row, col, emptySpace);
-    return message.str();
+    messageVector.push_back(message.str());
+    return xp;
 
 }
 

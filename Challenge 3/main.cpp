@@ -8,76 +8,114 @@
 #include <random>
 #include <chrono>
 
-void movePlayer(map &mapObj, player &playerObj, std::vector<enemy> &enemyVector, std::vector<std::string> &messageVector, const char &moveChar); //Moves player object on the map according to "moveChar" (atacks if moved towards enemy)
+void movePlayer(map &mapObj, player &playerObj, std::vector<enemy> &enemyVector, std::vector<std::string> &messageVector, const char &moveChar, bool &moveFlag); //Moves player object on the map according to "moveChar" (atacks if moved towards enemy). Also executes other actions according to "moveChar" (ie print player info)
 void moveEnemy(map &mapObj, enemy &enemyObj, const char &moveChar);//Moves enemy object on the map according to "moveChar"
 char getRandomMove(); //Returns random character (w, a, s, d)
-char getPlayerMove(); //Returns player input (w, a, s, d)
+char getPlayerMove(); //Returns player input
 
 void printScreen(const player &playerObj, const std::vector<enemy> &enemyVector, const map &mapObj, std::vector<std::string> &messageVector);
+void printPlayerData(const player &playerObj);
+void printGameInfo();
 
 int main()
 {
     map map1;
     player player1;
     std::vector<enemy> enemyVector;
-    map1.loadMap("mapTest.txt");
-    map1.printMap();
 
-    if (map1.initPlayer(player1) == 1){//Initialize player object. Map file must include one '@' character
+    printf("Welcome to TURBO-RPG 2000!\n");
+
+    //Load Map File
+    if(map1.loadMap("mapTest.txt") == 1){
         return 1;
-    };
+    }
 
-    if (map1.initEnemies(enemyVector) == 1){//Initialize enemies. Map file must include enemies
+    //Initialize player object. Map file must include one '@' character
+    if (map1.initPlayer(player1) == 1){
         return 1;
-    };
+    }
 
+    //Initialize enemies. Map file must include enemie characters
+    if (map1.initEnemies(enemyVector) == 1){
+        return 1;
+    }
+
+    printf("\n");
     system("pause");
-    system("cls");
-    map1.printMap();
+    printGameInfo();
 
-
-    while(player1.getHealth() > 0){//Game starts
-        std::string attackMessage;
+    //Game starts
+    while(true){
         static std::vector<std::string> messageVector;
 
         printScreen(player1, enemyVector, map1, messageVector);
-        movePlayer(map1, player1, enemyVector, messageVector, getPlayerMove());//First, the player moves (or attacks)
 
+        //Checks player death
+        if(player1.getHealth() <= 0){
+            std::cout << "GAME OVER: YOU HAVE BEEN KILLED\n";
+            return 1;
+        }
+
+        //Manage player input character
+        bool moveFlag = true;
+        do{//Repeats while any action other than moving takes place
+            if(moveFlag == false){//To prevent screen flashing, only prints map when returning from non-moving input
+                printScreen(player1, enemyVector, map1, messageVector);
+            }
+            //Player moves (or attacks)
+            movePlayer(map1, player1, enemyVector, messageVector, getPlayerMove(), moveFlag);
+        }while(moveFlag == false);
+
+        //Manage enemy actions in current turn
         for(int i = 0; i < enemyVector.size(); i++){//All enemies move or attack
-            if(map1.checkForPlayer(enemyVector[i]) == true){//If an enemy detects the player
-                player1.receiveDamage(enemyVector[i].attack(attackMessage));
-                messageVector.push_back(attackMessage);
-                if(player1.getHealth() <= 0){
-                    std::cout << "YOU HAVE BEEN KILLED: GAME OVER\n";
-                    return 1;
+            if(map1.checkForPlayer(enemyVector[i]) == true){//If an enemy detects the player, it attacks. Otherwise, it moves
+                player1.receiveDamage(enemyVector[i].attack(messageVector));
+                if(player1.getHealth() <= 0){//If player dies, exit the loop
+                    break;
                 }
-            }else{
+            }else if(enemyVector[i].getSymbol() != 'D'){//Dragon doesn't move
                 moveEnemy(map1, enemyVector[i], getRandomMove());
             }
         }
     }
 
+
 }
 
-void movePlayer(map &mapObj, player &playerObj, std::vector<enemy> &enemyVector, std::vector<std::string> &messageVector, const char &moveChar){
+void movePlayer(map &mapObj, player &playerObj, std::vector<enemy> &enemyVector, std::vector<std::string> &messageVector, const char &moveChar, bool &moveFlag){
     switch(moveChar){
     case 'w':
     case 'W':
         mapObj.movePlayer(playerObj, enemyVector, messageVector, playerObj.getRowPosition() - 1, playerObj.getColPosition());
+        moveFlag = true;
         break;
     case 'a':
     case 'A':
         mapObj.movePlayer(playerObj, enemyVector, messageVector, (playerObj.getRowPosition()), playerObj.getColPosition() - 1);
+        moveFlag = true;
         break;
     case 's':
     case 'S':
         mapObj.movePlayer(playerObj, enemyVector, messageVector, (playerObj.getRowPosition() + 1), playerObj.getColPosition());
+        moveFlag = true;
         break;
     case 'd':
     case 'D':
         mapObj.movePlayer(playerObj, enemyVector, messageVector, (playerObj.getRowPosition()), playerObj.getColPosition() + 1);
+        moveFlag = true;
+        break;
+    case 'i':
+    case 'I':
+        printPlayerData(playerObj);
+        moveFlag = false;
+        break;
+    case 'h':
+    case 'H':
+        printGameInfo();
+        moveFlag = false;
         break;
     default:
+        moveFlag = true;
         break;
     }
 }
@@ -125,6 +163,14 @@ char getPlayerMove(){
     case 'D':
         return 'd';
         break;
+    case 'i':
+    case 'I':
+        return 'i';
+        break;
+    case 'h':
+    case 'H':
+        return 'h';
+        break;
     default:
         return '0';
         break;
@@ -162,7 +208,7 @@ void printScreen(const player &playerObj, const std::vector<enemy> &enemyVector,
     mapObj.printMap();
 
     //Print Health Bar
-    std::cout << "Player: " << playerObj.getHealth() << " HP";
+    printf("Player: %d/%d HP", playerObj.getHealth(), playerObj.getMaxHealth());
     for(int i = 0; i < enemyVector.size(); i++){
         if(mapObj.checkForPlayer(enemyVector[i]) == true){//If an enemy is near the player
             std::cout << " - " << enemyVector[i].getName() << ": " << enemyVector[i].getHealth() << " HP";
@@ -170,9 +216,29 @@ void printScreen(const player &playerObj, const std::vector<enemy> &enemyVector,
     }
     std::cout << std::endl;
 
-    //Print enemy Messages
+    //Print Messages
     for(int i = 0; i < messageVector.size(); i++){
         std::cout << messageVector[i];
     }
     messageVector.clear();
+}
+
+void printPlayerData(const player &playerObj){
+    system("cls");
+    printf("Level: %d \nCurrent XP: %d/%d\n", playerObj.getLevel(), playerObj.getXp(), playerObj.getMaxXp());
+    printf("Health: %d/%d HP\n", playerObj.getHealth(), playerObj.getMaxHealth());
+    printf("Attack: %d \nDefence: %d \nPrecision: %.2f %\n", playerObj.getAttack(), playerObj.getDefence(), 100*playerObj.getPrecision());
+
+    std::cout << std::endl;
+    system("pause");
+}
+
+void printGameInfo(){
+    system("cls");
+    printf("Game Controls:\n\nH: Press anytime to display this information.\n");
+    printf("I: Press anytime to display player information.\n");
+    printf("W,A,S,D: Press to move your player, move against enemies to attack!\n");
+
+    printf("\nPressing any other key during the game will bring forward the next turn, \nplayer won't move but enemies will!\n\n");
+    system("pause");
 }

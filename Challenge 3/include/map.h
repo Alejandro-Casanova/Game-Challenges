@@ -19,6 +19,7 @@ class map
         const char emptySpace = '.';
         const char zombieChar = 'Z';
         const char skeletonChar = 'S';
+        const char dragonChar = 'D';
 
         bool loadMap(std::string fileName);//Loads map from text file
         void printMap() const;//Prints map on the screen.
@@ -29,7 +30,7 @@ class map
         void movePlayer(player &playerObj, std::vector<enemy> &enemyVector, std::vector<std::string> &messageVector, const int &row, const int &col);//Moves the player to selected coordinates (indexed at 0) and attacks if tile is occupied by enemy
         void moveEnemy(enemy &enemyObj, const int &row, const int &col);//Moves the enemy to selected coordinates (indexed at 0)
         bool checkForPlayer(const enemy &enemyObj) const; //Checks surroundings of enemy for player presence (doesn't check diagonals)
-        std::string killEnemy(std::vector<enemy> &enemyVector, const int &index);//Removes killed enemy and returns message
+        int killEnemy(std::vector<enemy> &enemyVector, const int &index, std::vector<std::string> &messageVector);//Removes killed enemy and returns xp gained
         int getVectorSize() const;//Gets the size of the vector that holds the map layout (map height)
         int getStringSize(const int &index) const; //Gets specific string size
         int getMaxStringSize() const;//Gets maximum string size (max map width)
