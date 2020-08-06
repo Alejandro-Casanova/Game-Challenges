@@ -1,0 +1,90 @@
+# depslib dependency file v1.0
+1596638014 source:c:\users\aleca\desktop\c++\game challenges\challenge 3\main.cpp
+	"player.h"
+	"enemy.h"
+	"map.h"
+	<iostream>
+	<string>
+	<conio.h>
+	<random>
+	<chrono>
+
+1596637619 source:c:\users\aleca\desktop\c++\game challenges\challenge 3\src\map.cpp
+	"map.h"
+
+1596630234 c:\users\aleca\desktop\c++\game challenges\challenge 3\include\map.h
+	"player.h"
+	"enemy.h"
+	<string>
+	<vector>
+	<fstream>
+	<sstream>
+	<iostream>
+	<cassert>
+
+1596635174 source:c:\users\aleca\desktop\c++\game challenges\challenge 3\src\player.cpp
+	"player.h"
+
+1596635174 c:\users\aleca\desktop\c++\game challenges\challenge 3\include\player.h
+	<iostream>
+	<sstream>
+	<random>
+	<chrono>
+	<cmath>
+
+1596635731 source:c:\users\aleca\desktop\c++\game challenges\challenge 3\src\enemy.cpp
+	"enemy.h"
+
+1596635731 c:\users\aleca\desktop\c++\game challenges\challenge 3\include\enemy.h
+	<string>
+	<iostream>
+	<sstream>
+	<random>
+	<chrono>
+	<cassert>
+
+1596749052 source:c:\users\aleca\desktop\c++\game challenges\challenge 4\src\enemy.cpp
+	"enemy.h"
+
+1596747309 c:\users\aleca\desktop\c++\game challenges\challenge 4\include\enemy.h
+	<string>
+	<iostream>
+	<sstream>
+	<random>
+	<chrono>
+	<cassert>
+
+1596749052 source:c:\users\aleca\desktop\c++\game challenges\challenge 4\src\map.cpp
+	"map.h"
+
+1596747309 c:\users\aleca\desktop\c++\game challenges\challenge 4\include\map.h
+	"player.h"
+	"enemy.h"
+	<string>
+	<vector>
+	<fstream>
+	<sstream>
+	<iostream>
+	<cassert>
+
+1596635174 c:\users\aleca\desktop\c++\game challenges\challenge 4\include\player.h
+	<iostream>
+	<sstream>
+	<random>
+	<chrono>
+	<cmath>
+
+1596635174 source:c:\users\aleca\desktop\c++\game challenges\challenge 4\src\player.cpp
+	"player.h"
+
+1596747108 source:c:\users\aleca\desktop\c++\game challenges\challenge 4\main.cpp
+	"player.h"
+	"enemy.h"
+	"map.h"
+	<iostream>
+	<string>
+	<conio.h>
+	<random>
+	<chrono>
+	<algorithm>
+
