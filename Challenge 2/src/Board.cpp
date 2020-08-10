@@ -1,10 +1,15 @@
 #include "Board.h"
 
-Board::Board(const int &size) : _size(size)//Makes a blank board
-{
-    layout.resize(size, std::vector<char>(size, emptyTile));
-}
+//Board::Board(const int &size) : _size(size)//Makes a blank board
+//{
+//    layout.resize(size, std::vector<char>(size, emptyTile));
+//}
 
+//Initialization of member variables
+int Board::_size = 0;
+std::vector<std::vector<char>> Board::layout = std::vector<std::vector<char>>(0, std::vector<char>(0, emptyTile));
+
+//Function definitions
 void Board::cinIndex(int &input, const int &maxSize, const std::string &message, const int &minSize){
     std::cout << message;
     while(true){
@@ -23,34 +28,46 @@ void Board::cinIndex(int &input, const int &maxSize, const std::string &message,
     }
 }
 
-void Board::printLine() const{//Prints a horizontal line, used in "Board::printBoard()" to print lines between rows
+void Board::printLine(){//Prints a horizontal line, used in "Board::printBoard()" to print lines between rows
     std::cout<<std::endl;
-    std::cout<<"--";
+    std::cout<<"---";
     for(int i = 0; i < getSize(); i++){
         std::cout<<"----";
+        if(i >= 9){
+            std::cout << "-";
+        }
     }
     std::cout<<std::endl;
 }
 
-void Board::printBoard() const{//Prints current layout
+void Board::printBoard(){//Prints current layout
     system("cls");
     std::cout<<"**TIC TAC TOE**";
+
     //Print row of x indexes
-    std::cout<<"\n |";
+    std::cout<<"\n  |";
     for(int i = 1; i <= getSize(); i++){
         std::cout<<" "<<i<<" |";
     }
     printLine();
+
     for(int i = 0; i < getSize(); i++){
+        if(i < 9){
+            std::cout << " ";
+        }
         std::cout<<i+1<<"|";
         for(int j = 0; j < getSize(); j++){
+            if(j >= 9){
+                std::cout << " ";
+            }
             std::cout<<" "<<layout[i][j]<<" |";
+
         }
         printLine();
     }
 }
 
-void Board::setTile(char mark){
+void Board::askForMove(char mark){
     int row, col;
     bool freeTile = false; //Indicates if the selected tile is free or already ocuppied
     do{
@@ -69,10 +86,14 @@ void Board::setTile(char mark){
         }
 
     }while(freeTile==false);
-    layout[row-1][col-1] = mark; //Takes place if the tile was free
+    setTile(row - 1, col - 1, mark); //Takes place if the tile was free
 }
 
-char Board::getTile(int row, int col) const{
+void Board::setTile(const int &row, const int &col, const char &mark){
+    layout[row][col] = mark;
+}
+
+char Board::getTile(int row, int col){
     return layout[row-1][col-1];
 }
 
@@ -80,14 +101,12 @@ std::vector<std::vector<char>> Board::getLayout(){
     return layout;
 }
 
-int Board::getSize() const{
+int Board::getSize(){
     return _size;
 }
 
 bool Board::checkVictory(char mark){
-    std::vector<std::vector<char>> layout;
     int auxFlag = 0;
-    layout = getLayout();
 
     //Check rows
     for(int i = 0; i < getSize(); i++){
@@ -188,3 +207,15 @@ bool Board::checkVictory(char mark){
     return false;
 }
 
+void Board::setSize(const int &newSize){
+    _size = newSize;
+}
+
+void Board::resizeBoard(const int &newSize){
+    layout.resize(newSize, std::vector<char>(newSize, emptyTile));
+    setSize(newSize);
+}
+
+void Board::clearBoard(){
+    layout.assign(_size, std::vector<char>(_size, emptyTile));
+}

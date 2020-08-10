@@ -1,7 +1,7 @@
 #include "Player.h"
 
 Player::Player(std::string name, char mark) : _name(name), _mark(mark){
-    std::cout<<"Welcome "<<name<<"!\n";
+    //std::cout<<"Welcome "<<name<<"!\n";
 }
 
 std::string Player::getName() const{

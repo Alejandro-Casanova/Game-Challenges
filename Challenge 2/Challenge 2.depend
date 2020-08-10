@@ -1,23 +1,32 @@
 # depslib dependency file v1.0
-1595349503 source:c:\users\aleca\desktop\c++\game challenges\challenge 2\src\player.cpp
+1597052629 source:c:\users\aleca\desktop\c++\game challenges\challenge 2\src\player.cpp
 	"Player.h"
 
 1595349503 c:\users\aleca\desktop\c++\game challenges\challenge 2\include\player.h
 	<iostream>
 	<string>
 
-1595784687 source:c:\users\aleca\desktop\c++\game challenges\challenge 2\main.cpp
+1597054043 source:c:\users\aleca\desktop\c++\game challenges\challenge 2\main.cpp
 	<iostream>
 	<string>
 	<vector>
+	<conio.h>
 	"Player.h"
 	"Board.h"
+	"AI.h"
 
-1595784600 source:c:\users\aleca\desktop\c++\game challenges\challenge 2\src\board.cpp
+1597020119 source:c:\users\aleca\desktop\c++\game challenges\challenge 2\src\board.cpp
 	"Board.h"
 
-1595719094 c:\users\aleca\desktop\c++\game challenges\challenge 2\include\board.h
+1597020040 c:\users\aleca\desktop\c++\game challenges\challenge 2\include\board.h
 	<iostream>
 	<string>
 	<vector>
+
+1597054058 source:c:\users\aleca\desktop\c++\game challenges\challenge 2\src\ai.cpp
+	"AI.h"
+
+1597053825 c:\users\aleca\desktop\c++\game challenges\challenge 2\include\ai.h
+	"Board.h"
+	<climits>
 
